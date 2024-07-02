@@ -280,3 +280,34 @@ async function increment() {
   // Теперь DOM обновлен
 }
 ```
+
+## Вычисляемые свойства
+​
+```
+<script setup>
+import { reactive, computed } from 'vue'
+
+const author = reactive({
+  name: 'John Doe',
+  books: [
+    'Vue 2 - Advanced Guide',
+    'Vue 3 - Basic Guide',
+    'Vue 4 - The Mystery'
+  ]
+})
+
+// ref вычисляемого свойства
+const publishedBooksMessage = computed(() => {
+  return author.books.length > 0 ? 'Да' : 'Нет'
+})
+</script>
+
+<template>
+  <p>Есть опубликованные книги:</p>
+  <span>{{ publishedBooksMessage }}</span>
+</template>
+```
+
+В этом примере объявляем новое вычисляемое свойство publishedBooksMessage. Функция computed() ожидает передачи функции-геттера и возвращает значение в виде ref вычисляемого свойства. Подобно обычным ref-ссылкам, можно получить доступ к вычисленному результату через publishedBooksMessage.value. Вычисляемые свойства в виде ref-ссылок также автоматически разворачиваются в шаблонах, поэтому можно ссылаться на них без .value в выражениях шаблонов.
+
+Вычисляемое свойство автоматически отслеживает свои реактивные зависимости. Vue знает, что publishedBooksMessage зависит от значения author.books, поэтому будет обновлять все привязки, которые зависят от publishedBooksMessage, при изменениях author.books.
