@@ -824,3 +824,208 @@ function warn(message, event) {
     .left
     .right
     .middle
+
+## Работа с формами
+​
+При работе с формами часто требуется синхронизировать состояния элементов ввода в форме с соответствующим состоянием в JavaScript. 
+
+```
+<input
+  :value="text"
+  @input="event => text = event.target.value"
+>
+```
+
+Директива v-model помогает упростить указанное выше до:
+
+```
+<input v-model="text">
+```
+
+### Текст
+
+```
+<p>Сообщение: {{ message }}</p>
+<input v-model="message" placeholder="отредактируй меня" />
+```
+
+### Многострочный текст
+​
+```
+<span>Многострочное сообщение:</span>
+<p style="white-space: pre-line;">{{ message }}</p>
+<textarea v-model="message" placeholder="введите несколько строчек"></textarea>
+```
+
+### Чекбоксы
+
+Один чекбокс, привязанный к булевому значению:
+
+```
+<input type="checkbox" id="checkbox" v-model="checked" />
+<label for="checkbox">{{ checked }}</label>
+```
+
+Список чекбоксов, привязанных к массиву или значениям Set:
+
+```
+const checkedNames = ref([])
+```
+
+```
+<div>Отмеченные имена: {{ checkedNames }}</div>
+
+<input type="checkbox" id="jack" value="Jack" v-model="checkedNames" />
+<label for="jack">Jack</label>
+
+<input type="checkbox" id="john" value="John" v-model="checkedNames" />
+<label for="john">John</label>
+
+<input type="checkbox" id="mike" value="Mike" v-model="checkedNames" />
+<label for="mike">Mike</label>
+```
+
+### Радиокнопки
+
+```
+<div>Выбрано: {{ picked }}</div>
+
+<input type="radio" id="one" value="Один" v-model="picked" />
+<label for="one">Один</label>
+
+<input type="radio" id="two" value="Два" v-model="picked" />
+<label for="two">Два</label>
+```
+
+### Выпадающие списки
+​
+Выбор одного варианта из списка:
+
+```
+<div>Выбрано: {{ selected }}</div>
+
+<select v-model="selected">
+  <option disabled value="">Выберите один из вариантов</option>
+  <option>А</option>
+  <option>Б</option>
+  <option>В</option>
+</select>
+```
+
+Выбор нескольких вариантов из списка (с привязкой к массиву):
+
+```
+<div>Выбраны: {{ selected }}</div>
+
+<select v-model="selected" multiple>
+  <option>А</option>
+  <option>Б</option>
+  <option>В</option>
+</select>
+```
+
+Динамическое отображение списка опций с помощью v-for:
+
+```
+const selected = ref('A')
+
+const options = ref([
+  { text: 'Один', value: 'A' },
+  { text: 'Два', value: 'B' },
+  { text: 'Три', value: 'C' }
+])
+```
+
+```
+<select v-model="selected">
+  <option v-for="option in options" :value="option.value">
+    {{ option.text }}
+  </option>
+</select>
+
+<div>Выбрано: {{ selected }}</div>
+```
+
+### Привязка значений
+​
+```
+<!-- `picked` будет строкой "a" при выборе -->
+<input type="radio" v-model="picked" value="a" />
+
+<!-- `toggle` может принимать значение true или false -->
+<input type="checkbox" v-model="toggle" />
+
+<!-- `selected` будет строкой "abc" при выборе первого пункта -->
+<select v-model="selected">
+  <option value="abc">ABC</option>
+</select>
+```
+
+### Чекбокс
+
+```
+<input
+  type="checkbox"
+  v-model="toggle"
+  true-value="да"
+  false-value="нет" />
+```
+
+Атрибуты true-value и false-value — специальные атрибуты Vue, которые работают только в связке с v-model. 
+Здесь значение свойства toggle будет установлено в 'да', когда чекбокс выбран, и в 'нет' когда сброшен. 
+Также можно привязать их к динамическим значением с помощью v-bind:
+
+```
+<input
+  type="checkbox"
+  v-model="toggle"
+  :true-value="dynamicTrueValue"
+  :false-value="dynamicFalseValue" />
+```
+
+### Радиокнопки
+
+```
+<input type="radio" v-model="pick" :value="first" />
+<input type="radio" v-model="pick" :value="second" />
+```
+
+Значение pick будет установлено в first при выборе первой радиокнопки, и в значение second при выборе второй.
+
+
+### Выпадающие списки
+​
+```
+<select v-model="selected">
+  <!-- инлайновый объект с данными -->
+  <option :value="{ number: 123 }">123</option>
+</select>
+```
+
+Директива v-model поддерживает привязку и нестроковых значений! В примере выше, когда опция выбрана, 
+значение selected будет объектом { number: 123 }.
+
+### Модификаторы
+
+По умолчанию v-model синхронизирует поле ввода с данными по событию input (кроме вышеупомянутых исключений для композиции IME). 
+Можно воспользоваться модификатором lazy, чтобы синхронизация происходила по событию change:
+
+```
+<!-- синхронизация после события "change" вместо "input" -->
+<input v-model.lazy="msg" />
+```
+
+Для автоматического приведения введённого пользователем к числу можно добавить модификатор number:
+
+```
+<input v-model.number="age" />
+```
+
+Если значение не получится привести к числу с помощью parseFloat(), то будет возвращено исходное значение.
+Модификатор number автоматически применяется к полям type="number".
+
+Если необходимо автоматически удалять пробельные символы в начале и в конце строки, можно добавить модификатор trim:
+
+```
+<input v-model.trim="msg" />
+```
