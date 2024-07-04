@@ -1029,3 +1029,9 @@ const options = ref([
 ```
 <input v-model.trim="msg" />
 ```
+
+## Хуки жизненного цикла
+
+![Диаграмма жизненного цикла](/lifecycle.png)
+​
+
